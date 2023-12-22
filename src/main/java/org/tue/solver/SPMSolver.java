@@ -9,6 +9,7 @@ import org.tue.solver.measure.Measure;
 import org.tue.solver.measure.Top;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.function.BinaryOperator;
 
 public class SPMSolver {
@@ -62,6 +63,7 @@ public class SPMSolver {
         while (iterationsWithoutProgress < this.nodes.length) {
             var nodeToLift = this.nodes[liftingOrder[idx]];
             if (lift(nodeToLift)) {
+                System.out.println(Arrays.toString(measures));
                 iterationsWithoutProgress = 0;
             } else {
                 iterationsWithoutProgress++;

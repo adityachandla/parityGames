@@ -64,7 +64,7 @@ public final class M implements Measure {
             return CompareResult.LESSER;
         }
         var otherArray = ((M)other).getArr();
-        for (int i = idx; i >= 0; i--) {
+        for (int i = 0; i <= idx; i++) {
             if (arr[i] > otherArray[i]) {
                 return CompareResult.GREATER;
             } else if (arr[i] < otherArray[i]) {
