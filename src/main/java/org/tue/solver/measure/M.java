@@ -46,6 +46,34 @@ public final class M implements Measure {
         };
     }
 
+    @Override
+    public Measure increment(M maximum, int idx) {
+        for (int i = idx; i >= 0; i--) {
+            if (arr[i] < maximum.getArr()[i]) {
+                var newM = new M(Arrays.copyOf(arr, arr.length));
+                newM.getArr()[i]++;
+                return newM;
+            }
+        }
+        return Top.getInstance();
+    }
+
+    @Override
+    public CompareResult compareTillIndex(Measure other, int idx) {
+        if (other instanceof Top) {
+            return CompareResult.LESSER;
+        }
+        var otherArray = ((M)other).getArr();
+        for (int i = idx; i >= 0; i--) {
+            if (arr[i] > otherArray[i]) {
+                return CompareResult.GREATER;
+            } else if (arr[i] < otherArray[i]) {
+                return CompareResult.LESSER;
+            }
+        }
+        return CompareResult.EQUAL;
+    }
+
     private Measure computeMax(M other) {
         for (int i = 0; i < arr.length; i++) {
             if (other.arr[i] < arr[i]) {

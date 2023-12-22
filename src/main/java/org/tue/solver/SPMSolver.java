@@ -1,13 +1,14 @@
 package org.tue.solver;
 
+import org.tue.dto.GameResult;
 import org.tue.dto.Node;
 import org.tue.dto.Owner;
+import org.tue.solver.measure.CompareResult;
 import org.tue.solver.measure.M;
 import org.tue.solver.measure.Measure;
 import org.tue.solver.measure.Top;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.function.BinaryOperator;
 
 public class SPMSolver {
@@ -65,6 +66,7 @@ public class SPMSolver {
             } else {
                 iterationsWithoutProgress++;
             }
+            idx = (idx + 1) % nodes.length;
         }
         return computeGameResult();
     }
@@ -82,7 +84,6 @@ public class SPMSolver {
                 .orElseThrow();
         var currMeasure = measures[node.getId()];
         //Simple equals method checks for reference equality which is not what we want.
-        System.out.printf("Current is %s, lifted is %s\n", currMeasure, liftedMeasure);
         boolean liftHappened = !currMeasure.measureEqual(liftedMeasure);
         //Values are monotonic. It is safe to just assign the new value.
         measures[node.getId()] = liftedMeasure;
@@ -90,8 +91,25 @@ public class SPMSolver {
     }
 
     private Measure progress(Node src, Node dest) {
-        //TODO implement.
-        return Top.getInstance();
+        int compareLength = src.getPriority();
+        Measure srcMeasure = measures[src.getId()];
+        Measure destMeasure = measures[dest.getId()];
+        //Even case
+        if (src.getPriority() % 2 == 0) {
+            //The current one is less than the destination one.
+            if (srcMeasure.compareTillIndex(destMeasure, compareLength) == CompareResult.LESSER) {
+                return destMeasure;
+            }
+            // The current one is greater than or equal to the destination one.
+            return srcMeasure;
+        }
+        //Odd case
+        //If the current measure is less than or equal to the destination measure.
+        if (srcMeasure.compareTillIndex(destMeasure, compareLength) != CompareResult.GREATER) {
+            return destMeasure.increment(maxM, compareLength);
+        }
+        //The source measure was already greater than destination measure.
+        return srcMeasure;
     }
 
     /**
@@ -104,7 +122,6 @@ public class SPMSolver {
      */
     private GameResult computeGameResult() {
         var res = new GameResult(new ArrayList<>(), new ArrayList<>());
-        System.out.println(Arrays.toString(measures));
         for (var node : nodes) {
             if (measures[node.getId()] instanceof Top) {
                 res.getWonByOdd().add(node.getId());

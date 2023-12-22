@@ -29,6 +29,19 @@ public final class Top implements Measure {
     }
 
     @Override
+    public Measure increment(M maximum, int idx) {
+        return this;
+    }
+
+    @Override
+    public CompareResult compareTillIndex(Measure other, int idx) {
+        return switch (other) {
+            case Top ignored -> CompareResult.EQUAL;
+            case M ignored -> CompareResult.GREATER;
+        };
+    }
+
+    @Override
     public String toString() {
         return "T";
     }

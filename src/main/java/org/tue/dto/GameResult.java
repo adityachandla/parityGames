@@ -1,4 +1,4 @@
-package org.tue.solver;
+package org.tue.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,12 +1,12 @@
 package org.tue;
 
 import org.tue.dto.Node;
-import org.tue.solver.GameResult;
+import org.tue.dto.GameResult;
 import org.tue.solver.LiftingStrategy;
 import org.tue.solver.SPMSolver;
 import org.tue.utils.PGParser;
 
-public class ParityGames {
+public class ParityGame {
 
 
     public static void main(String[] args) {
