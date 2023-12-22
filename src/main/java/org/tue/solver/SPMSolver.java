@@ -9,7 +9,6 @@ import org.tue.solver.measure.Measure;
 import org.tue.solver.measure.Top;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.function.BinaryOperator;
 
 public class SPMSolver {
@@ -52,7 +51,14 @@ public class SPMSolver {
     private void initializeMeasures() {
         for (int i = 0; i < this.measures.length; i++) {
             var emptyArray = new int[maxPriority + 1];
-            this.measures[i] = new M(emptyArray);
+            if (nodes[i].getPriority() % 2 == 1 &&
+                    nodes[i].getSuccessors().contains(i) &&
+                    nodes[i].getOwner() == Owner.ODD
+            ) {
+                this.measures[i] = Top.getInstance();
+            } else {
+                this.measures[i] = new M(emptyArray);
+            }
         }
     }
 
@@ -60,20 +66,27 @@ public class SPMSolver {
         initializeMeasures();
         int iterationsWithoutProgress = 0;
         int idx = 0;
+        int totalLifts = 0;
+        int totalSuccessfulLifts = 0;
         while (iterationsWithoutProgress < this.nodes.length) {
             var nodeToLift = this.nodes[liftingOrder[idx]];
             if (lift(nodeToLift)) {
-                System.out.println(Arrays.toString(measures));
+                totalSuccessfulLifts++;
                 iterationsWithoutProgress = 0;
             } else {
                 iterationsWithoutProgress++;
             }
+            totalLifts++;
             idx = (idx + 1) % nodes.length;
         }
+        System.out.printf("Total=%d Successful=%d", totalLifts, totalSuccessfulLifts);
         return computeGameResult();
     }
 
     private boolean lift(Node node) {
+        if (measures[node.getId()] instanceof Top) {
+            return false;
+        }
         BinaryOperator<Measure> reduceFunction;
         if (node.getOwner() == Owner.EVEN) {
             reduceFunction = Measure::getMin;

@@ -5,6 +5,7 @@ import org.tue.dto.Node;
 import org.tue.dto.Owner;
 
 import java.io.*;
+import java.util.HashSet;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -14,8 +15,10 @@ public class PGParser {
             Pattern.compile("(?<id>\\d+) (?<priority>\\d+) (?<owner>\\d+) (?<successors>[\\d,]+)( \"(?<name>.*)\")?;");
 
 
+    public record ParseOutput(int[] inputOrder, Node[] nodes){}
+
     @SneakyThrows({FileNotFoundException.class, IOException.class})
-    public static Node[] parseFile(String input) {
+    public static ParseOutput parseFile(String input) {
         var streamReader = new InputStreamReader(new FileInputStream(input));
         var reader = new BufferedReader(streamReader);
         String line = reader.readLine();
@@ -25,11 +28,18 @@ public class PGParser {
         }
         var numNodes = Integer.parseInt(lineMatch.group("num")) + 1;
         var nodes = new Node[numNodes];
+        var inputOrder = new int[numNodes];
+        var seenSet = new HashSet<Integer>();
+        var inputOrderIdx = 0;
         while ((line = reader.readLine()) != null) {
             var node = getNodeFromLine(line);
             nodes[node.getId()] = node;
+            if (!seenSet.contains(node.getId())) {
+                inputOrder[inputOrderIdx++] = node.getId();
+                seenSet.add(node.getId());
+            }
         }
-        return nodes;
+        return new ParseOutput(inputOrder, nodes);
     }
 
     private static Node getNodeFromLine(String line) {
