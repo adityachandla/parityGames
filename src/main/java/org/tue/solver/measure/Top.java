@@ -1,4 +1,4 @@
-package org.tue.game.measure;
+package org.tue.solver.measure;
 
 public final class Top implements Measure {
     private static final Top instance = new Top();
@@ -12,10 +12,7 @@ public final class Top implements Measure {
 
     @Override
     public Measure getMin(Measure other) {
-        return switch (other) {
-            case Top t -> t;
-            case M m -> m;
-        };
+        return other;
     }
 
     @Override
@@ -29,5 +26,10 @@ public final class Top implements Measure {
             case Top ignored -> true;
             case M ignored -> false;
         };
+    }
+
+    @Override
+    public String toString() {
+        return "T";
     }
 }

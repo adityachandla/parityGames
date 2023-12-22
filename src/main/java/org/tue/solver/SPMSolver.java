@@ -1,22 +1,22 @@
-package org.tue.game;
+package org.tue.solver;
 
 import org.tue.dto.Node;
 import org.tue.dto.Owner;
-import org.tue.game.measure.M;
-import org.tue.game.measure.Measure;
-import org.tue.game.measure.Top;
+import org.tue.solver.measure.M;
+import org.tue.solver.measure.Measure;
+import org.tue.solver.measure.Top;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.function.BinaryOperator;
 
 public class SPMSolver {
 
     private final Node[] nodes;
     private final int maxPriority;
-    private Measure[] measures;
-    //Stores the number of nodes with the given priority.
-    private Map<Integer, Integer> priorityCount;
+    private final Measure[] measures;
+    //Stores the maximum possible value of M for this game.
+    private final M maxM;
 
     public SPMSolver(Node[] nodes) {
         this.nodes = nodes;
@@ -25,25 +25,29 @@ public class SPMSolver {
             max = Integer.max(max, n.getPriority());
         }
         this.maxPriority = max;
-        createPriorityCountMap();
+        maxM = new M(new int[this.maxPriority + 1]);
+        initializeMaxM();
+        this.measures = new Measure[this.nodes.length];
+        initializeMeasures();
     }
 
-    public void createPriorityCountMap() {
-        priorityCount = new HashMap<>();
-        for (var n : this.nodes) {
-            var priority = n.getPriority();
-            if (priority % 2 != 0) {
-                int currVal = 0;
-                if (priorityCount.containsKey(priority)) {
-                    currVal = priorityCount.get(priority);
-                }
-                priorityCount.put(priority, currVal + 1);
+    /**
+     * Maximum value of M is simply the count of odd
+     * nodes in the game.
+     */
+    private void initializeMaxM() {
+        for (var n : nodes) {
+            if (n.getPriority() % 2 != 0) {
+                maxM.getArr()[n.getPriority()]++;
             }
         }
     }
 
+    /**
+     * This method initializes all measures to an empty
+     * array of size maxPriority+1.
+     */
     private void initializeMeasures() {
-        this.measures = new Measure[this.nodes.length];
         for (int i = 0; i < this.measures.length; i++) {
             var emptyArray = new int[maxPriority + 1];
             this.measures[i] = new M(emptyArray);
@@ -62,7 +66,7 @@ public class SPMSolver {
                 iterationsWithoutProgress++;
             }
         }
-        return null;
+        return computeGameResult();
     }
 
     private boolean lift(Node node) {
@@ -76,10 +80,10 @@ public class SPMSolver {
                 .map(successor -> progress(node, this.nodes[successor]))
                 .reduce(reduceFunction)
                 .orElseThrow();
-        //Is the lifted measure different from the current one.
         var currMeasure = measures[node.getId()];
         //Simple equals method checks for reference equality which is not what we want.
-        boolean liftHappened = currMeasure.measureEqual(liftedMeasure);
+        System.out.printf("Current is %s, lifted is %s\n", currMeasure, liftedMeasure);
+        boolean liftHappened = !currMeasure.measureEqual(liftedMeasure);
         //Values are monotonic. It is safe to just assign the new value.
         measures[node.getId()] = liftedMeasure;
         return liftHappened;
@@ -88,5 +92,26 @@ public class SPMSolver {
     private Measure progress(Node src, Node dest) {
         //TODO implement.
         return Top.getInstance();
+    }
+
+    /**
+     * This function partitions the nodes into two sets, the
+     * ones won by odd and the ones won by even. The nodes
+     * whose measure is top are won by odd and the rest are
+     * won by even.
+     *
+     * @return GameResult
+     */
+    private GameResult computeGameResult() {
+        var res = new GameResult(new ArrayList<>(), new ArrayList<>());
+        System.out.println(Arrays.toString(measures));
+        for (var node : nodes) {
+            if (measures[node.getId()] instanceof Top) {
+                res.getWonByOdd().add(node.getId());
+            } else {
+                res.getWonByEven().add(node.getId());
+            }
+        }
+        return res;
     }
 }

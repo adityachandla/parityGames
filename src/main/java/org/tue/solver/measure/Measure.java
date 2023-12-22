@@ -1,4 +1,4 @@
-package org.tue.game.measure;
+package org.tue.solver.measure;
 
 public sealed interface Measure permits Top, M {
     Measure getMin(Measure other);

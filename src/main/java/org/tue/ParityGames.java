@@ -1,8 +1,10 @@
 package org.tue;
 
+import org.tue.dto.Node;
+import org.tue.solver.GameResult;
+import org.tue.solver.LiftingStrategy;
+import org.tue.solver.SPMSolver;
 import org.tue.utils.PGParser;
-
-import java.util.Arrays;
 
 public class ParityGames {
 
@@ -12,8 +14,11 @@ public class ParityGames {
             System.out.println("Provide the path to the file.");
             System.exit(-1);
         }
-        var nodes = PGParser.parseFile(args[0]);
-        System.out.println(Arrays.toString(nodes));
+        Node[] nodes = PGParser.parseFile(args[0]);
+        var solver = new SPMSolver(nodes);
+        int[] liftingStrategy = LiftingStrategy.getOrderedLiftingStrategy(nodes);
+        GameResult gameResult = solver.solve(liftingStrategy);
+        System.out.println(gameResult);
     }
 
 }

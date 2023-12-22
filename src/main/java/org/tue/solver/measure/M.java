@@ -1,8 +1,10 @@
-package org.tue.game.measure;
+package org.tue.solver.measure;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.tue.utils.ArrayUtil;
+
+import java.util.Arrays;
 
 @AllArgsConstructor
 @Getter
@@ -53,5 +55,10 @@ public final class M implements Measure {
             }
         }
         return other;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("M(%s)", Arrays.toString(arr));
     }
 }
