@@ -79,7 +79,7 @@ public class SPMSolver {
             totalLifts++;
             idx = (idx + 1) % nodes.length;
         }
-        System.out.printf("Total=%d Successful=%d", totalLifts, totalSuccessfulLifts);
+        System.out.printf("Total=%d Successful=%d%n", totalLifts, totalSuccessfulLifts);
         return computeGameResult();
     }
 

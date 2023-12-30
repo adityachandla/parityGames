@@ -18,7 +18,7 @@ public sealed interface Measure permits Top, M {
     /**
      * Compares the current
      * @param other other measure
-     * @param idx index to start the comparison from. Comparision happens from idx -> 0.
+     * @param idx index to compare till. Comparison happens from idx -> 0.
      * @return GREATER if the current measure is greater than other
      * LESSER if the current measure is less than the other
      * EQUAL if the current measure is equal to the other.
