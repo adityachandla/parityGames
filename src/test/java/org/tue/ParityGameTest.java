@@ -11,17 +11,6 @@ import java.util.List;
 
 public class ParityGameTest {
     private static final String TEST_PATH = "./tests/";
-
-    @Test
-    public void testSlideExample() {
-        var nodes = PGParser.parseFile(TEST_PATH + "endOfSlide.gm");
-        var solver = new SPMSolver(nodes.nodes());
-        int[] liftingStrategy = LiftingStrategy.getOrderedLiftingStrategy(nodes.nodes());
-        GameResult gameResult = solver.solve(liftingStrategy);
-        Assertions.assertEquals(gameResult.getWonByEven().size(), 0);
-        Assertions.assertEquals(gameResult.getWonByOdd().size(), nodes.nodes().length);
-    }
-
     @Test
     public void testTestcase1() {
         var nodes = PGParser.parseFile(TEST_PATH + "testcase1.gm");
@@ -31,6 +20,17 @@ public class ParityGameTest {
         Assertions.assertEquals(gameResult.getWonByEven().size(), 0);
         Assertions.assertEquals(gameResult.getWonByOdd().size(), nodes.nodes().length);
     }
+
+    @Test
+    public void testTestcase2() {
+        var nodes = PGParser.parseFile(TEST_PATH + "testcase2.gm");
+        var solver = new SPMSolver(nodes.nodes());
+        int[] liftingStrategy = LiftingStrategy.getOrderedLiftingStrategy(nodes.nodes());
+        GameResult gameResult = solver.solve(liftingStrategy);
+        Assertions.assertEquals(gameResult.getWonByEven().size(), 0);
+        Assertions.assertEquals(gameResult.getWonByOdd().size(), nodes.nodes().length);
+    }
+
     @Test
     public void testTestcase3() {
         var nodes = PGParser.parseFile(TEST_PATH + "testcase3.gm");
