@@ -11,8 +11,9 @@ import java.util.function.Predicate;
 public class LiftingStrategy {
 
     /**
-     * This simply returns an array that contains the node ids
-     * in the same order as the order of Node array in the argument.
+     * @deprecated I don't think we need this anymore,
+     * we already have the input order lifting in the
+     * parse results.
      */
     public static int[] getOrderedLiftingStrategy(Node[] nodes) {
         int[] order = new int[nodes.length];
@@ -59,5 +60,20 @@ public class LiftingStrategy {
             }
         }
         return res;
+    }
+
+    public static int[] getOddNodeBFSStrategy(Node[] nodes) {
+        List<List<Integer>> reverseAdjacency = new ArrayList<>(nodes.length);
+        for(int i = 0; i < nodes.length; i++) {
+            reverseAdjacency.add(new ArrayList<>());
+        }
+        for (var src: nodes) {
+            for (var dest : src.getSuccessors()) {
+                reverseAdjacency.get(dest).add(src.getId());
+            }
+        }
+        int[] resOrder = new int[nodes.length];
+        //TODO implement the BFS.
+        return resOrder;
     }
 }

@@ -72,19 +72,21 @@ public class SPMSolver {
         int totalSuccessfulLifts = 0;
         while (iterationsWithoutProgress < this.nodes.length) {
             var nodeToLift = this.nodes[liftingOrder[idx]];
-            if (lift(nodeToLift)) {
+            //Lift while it is possible to lift.
+            //This greatly improves efficiency.
+            while (lift(nodeToLift)) {
                 totalSuccessfulLifts++;
                 iterationsWithoutProgress = 0;
-            } else {
-                iterationsWithoutProgress++;
             }
+            iterationsWithoutProgress++;
             if (totalLifts%10_000 == 0) {
                 System.out.printf("In Progress: Total=%d Successful=%d\r", totalLifts, totalSuccessfulLifts);
             }
             totalLifts++;
             idx = (idx + 1) % nodes.length;
         }
-        System.out.printf("Done: Total=%d Successful=%d%n", totalLifts, totalSuccessfulLifts);
+        double successRatio = totalSuccessfulLifts/(double)totalLifts;
+        System.out.printf("Done: Total=%d Successful=%d Ratio=%f%n", totalLifts, totalSuccessfulLifts, successRatio);
         return computeGameResult();
     }
 
