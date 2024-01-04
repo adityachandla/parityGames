@@ -1,12 +1,19 @@
 package org.tue.solver;
 
 import org.tue.dto.Node;
+import org.tue.dto.Owner;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.function.Predicate;
 
 public class LiftingStrategy {
 
+    /**
+     * This simply returns an array that contains the node ids
+     * in the same order as the order of Node array in the argument.
+     */
     public static int[] getOrderedLiftingStrategy(Node[] nodes) {
         int[] order = new int[nodes.length];
         for (int i = 0; i < nodes.length; i++) {
@@ -26,5 +33,31 @@ public class LiftingStrategy {
             order[i] = nodeIds.get(i);
         }
         return order;
+    }
+
+    /**
+     * This function returns a list of nodes ids such that
+     * the nodes are in the following order:
+     * [OddParity + OddOwned, OddParity + EvenOwned,
+     * EvenParity + OddOwned, EvenParity + EvenOwned]
+     * @param nodes: array of nodes
+     * @return an array of node ids
+     */
+    public static int[] getOrderedNodeTypeStrategy(Node[] nodes) {
+        int[] res = new int[nodes.length];
+        Predicate<Node> oddOddPredicate = (n) -> n.getPriority()%2 != 0 && n.getOwner() == Owner.ODD;
+        Predicate<Node> oddEvenPredicate = (n) -> n.getPriority()%2 != 0 && n.getOwner() == Owner.EVEN;
+        Predicate<Node> evenOddPredicate = (n) -> n.getPriority()%2 == 0 && n.getOwner() == Owner.ODD;
+        Predicate<Node> evenEvenPredicate = (n) -> n.getPriority()%2 == 0 && n.getOwner() == Owner.EVEN;
+        var order = List.of(oddOddPredicate, oddEvenPredicate, evenOddPredicate, evenEvenPredicate);
+        int idx = 0;
+        for (var predicate: order) {
+            for (var n: nodes) {
+                if(predicate.test(n)) {
+                    res[idx++] = n.getId();
+                }
+            }
+        }
+        return res;
     }
 }

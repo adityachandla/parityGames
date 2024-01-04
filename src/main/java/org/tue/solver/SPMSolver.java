@@ -78,10 +78,13 @@ public class SPMSolver {
             } else {
                 iterationsWithoutProgress++;
             }
+            if (totalLifts%10_000 == 0) {
+                System.out.printf("In Progress: Total=%d Successful=%d\r", totalLifts, totalSuccessfulLifts);
+            }
             totalLifts++;
             idx = (idx + 1) % nodes.length;
         }
-        System.out.printf("Total=%d Successful=%d%n", totalLifts, totalSuccessfulLifts);
+        System.out.printf("Done: Total=%d Successful=%d%n", totalLifts, totalSuccessfulLifts);
         return computeGameResult();
     }
 
