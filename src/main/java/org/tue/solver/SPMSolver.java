@@ -49,15 +49,17 @@ public class SPMSolver {
      * array of size maxPriority+1.
      */
     private void initializeMeasures() {
+        // Instead of allocating different arrays for each
+        // node, do a copy on write.
+        var bottom = new M(new int[maxPriority + 1]);
         for (int i = 0; i < this.measures.length; i++) {
-            var emptyArray = new int[maxPriority + 1];
             if (nodes[i].getPriority() % 2 == 1 &&
                     nodes[i].getSuccessors().contains(i) &&
                     nodes[i].getOwner() == Owner.ODD
             ) {
                 this.measures[i] = Top.getInstance();
             } else {
-                this.measures[i] = new M(emptyArray);
+                this.measures[i] = bottom;
             }
         }
     }
