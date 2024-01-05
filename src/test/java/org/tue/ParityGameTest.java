@@ -3,10 +3,12 @@ package org.tue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.tue.dto.GameResult;
+import org.tue.solver.BFSLifting;
 import org.tue.solver.LiftingStrategy;
 import org.tue.solver.SPMSolver;
 import org.tue.utils.PGParser;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ParityGameTest {
@@ -15,7 +17,7 @@ public class ParityGameTest {
     public void testTestcase1() {
         var nodes = PGParser.parseFile(TEST_PATH + "testcase1.gm");
         var solver = new SPMSolver(nodes.nodes());
-        int[] liftingStrategy = LiftingStrategy.getOrderedLiftingStrategy(nodes.nodes());
+        int[] liftingStrategy = LiftingStrategy.getOrderedNodeTypeStrategy(nodes.nodes());
         GameResult gameResult = solver.solve(liftingStrategy);
         Assertions.assertEquals(gameResult.getWonByEven().size(), 0);
         Assertions.assertEquals(gameResult.getWonByOdd().size(), nodes.nodes().length);
@@ -53,7 +55,9 @@ public class ParityGameTest {
     public void testTestcase5() {
         var nodes = PGParser.parseFile(TEST_PATH + "testcase5.gm");
         var solver = new SPMSolver(nodes.nodes());
-        int[] liftingStrategy = LiftingStrategy.getOrderedLiftingStrategy(nodes.nodes());
+        var bfsStrategy = new BFSLifting(nodes.nodes());
+        int[] liftingStrategy = bfsStrategy.getOddNodeBFSStrategy();
+        System.out.println(Arrays.toString(liftingStrategy));
         GameResult gameResult = solver.solve(liftingStrategy);
         Assertions.assertEquals(gameResult.getWonByEven().size(), 0);
         Assertions.assertEquals(gameResult.getWonByOdd().size(), nodes.nodes().length);
@@ -71,7 +75,9 @@ public class ParityGameTest {
     public void testTestcase6() {
         var nodes = PGParser.parseFile(TEST_PATH + "testcase6.gm");
         var solver = new SPMSolver(nodes.nodes());
-        int[] liftingStrategy = LiftingStrategy.getOrderedLiftingStrategy(nodes.nodes());
+        var bfsStrategy = new BFSLifting(nodes.nodes());
+        int[] liftingStrategy = bfsStrategy.getOddNodeBFSStrategy();
+        System.out.println(Arrays.toString(liftingStrategy));
         GameResult gameResult = solver.solve(liftingStrategy);
         Assertions.assertEquals(gameResult.getWonByOdd(), List.of(1,2));
         Assertions.assertEquals(gameResult.getWonByEven(), List.of(0,3,4));

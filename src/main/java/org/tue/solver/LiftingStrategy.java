@@ -5,7 +5,9 @@ import org.tue.dto.Owner;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.function.Predicate;
 
 public class LiftingStrategy {
@@ -62,18 +64,4 @@ public class LiftingStrategy {
         return res;
     }
 
-    public static int[] getOddNodeBFSStrategy(Node[] nodes) {
-        List<List<Integer>> reverseAdjacency = new ArrayList<>(nodes.length);
-        for(int i = 0; i < nodes.length; i++) {
-            reverseAdjacency.add(new ArrayList<>());
-        }
-        for (var src: nodes) {
-            for (var dest : src.getSuccessors()) {
-                reverseAdjacency.get(dest).add(src.getId());
-            }
-        }
-        int[] resOrder = new int[nodes.length];
-        //TODO implement the BFS.
-        return resOrder;
-    }
 }

@@ -2,6 +2,7 @@ package org.tue;
 
 import org.tue.dto.GameResult;
 import org.tue.dto.Node;
+import org.tue.solver.BFSLifting;
 import org.tue.solver.LiftingStrategy;
 import org.tue.solver.SPMSolver;
 import org.tue.utils.PGParser;
@@ -30,7 +31,8 @@ public class ParityGame {
         String filePath = file.getAbsolutePath();
         var parseOutput = PGParser.parseFile(filePath);
         Node[] nodes = parseOutput.nodes();
-        var orderedStrategy = LiftingStrategy.getOrderedNodeTypeStrategy(nodes);
+        var bfsLifting = new BFSLifting(nodes);
+        var orderedStrategy = bfsLifting.getOddNodeBFSStrategy();
         var solver = new SPMSolver(nodes);
 
         System.out.printf("Game being solved: %s%n", file);

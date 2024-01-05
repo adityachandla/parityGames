@@ -15,4 +15,12 @@ public class Node {
     private int priority;
     private String name;
     private List<Integer> successors;
+
+    public boolean isOddOwned() {
+        return owner == Owner.ODD;
+    }
+
+    public boolean isOddPriority() {
+        return priority%2 != 0;
+    }
 }

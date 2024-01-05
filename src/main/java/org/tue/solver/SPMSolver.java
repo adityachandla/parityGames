@@ -9,6 +9,7 @@ import org.tue.solver.measure.Measure;
 import org.tue.solver.measure.Top;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.function.BinaryOperator;
 
 public class SPMSolver {
@@ -52,16 +53,7 @@ public class SPMSolver {
         // Instead of allocating different arrays for each
         // node, do a copy on write.
         var bottom = new M(new int[maxPriority + 1]);
-        for (int i = 0; i < this.measures.length; i++) {
-            if (nodes[i].getPriority() % 2 == 1 &&
-                    nodes[i].getSuccessors().contains(i) &&
-                    nodes[i].getOwner() == Owner.ODD
-            ) {
-                this.measures[i] = Top.getInstance();
-            } else {
-                this.measures[i] = bottom;
-            }
-        }
+        Arrays.fill(this.measures, bottom);
     }
 
     public GameResult solve(int[] liftingOrder) {
@@ -79,9 +71,6 @@ public class SPMSolver {
                 iterationsWithoutProgress = 0;
             }
             iterationsWithoutProgress++;
-            if (totalLifts%10_000 == 0) {
-                System.out.printf("In Progress: Total=%d Successful=%d\r", totalLifts, totalSuccessfulLifts);
-            }
             totalLifts++;
             idx = (idx + 1) % nodes.length;
         }
