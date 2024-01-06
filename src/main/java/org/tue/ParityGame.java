@@ -8,42 +8,61 @@ import org.tue.solver.SPMSolver;
 import org.tue.utils.PGParser;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class ParityGame {
 
+    private static final Map<String, Function<PGParser.ParseOutput, int[]>> liftingStrategyMap =
+            Map.of("inputOrder", PGParser.ParseOutput::inputOrder,
+                    "random", (res) -> LiftingStrategy.getRandomLiftingStrategy(res.nodes()),
+                    "orderedNodes", (res) -> LiftingStrategy.getOrderedNodeTypeStrategy(res.nodes()),
+                    "bfsOrder", ParityGame::getBfsOrderStrategy
+            );
+
     public static void main(String[] args) {
-        if (args.length == 0) {
-            System.out.println("Provide the path to the input file/folder.");
+        if (args.length < 1) {
+            System.out.println("Provide the path to the input file/folder optionally followed by lifting strategy.");
             System.exit(-1);
+        }
+        Function<PGParser.ParseOutput, int[]> liftingStrategy;
+        if (args.length == 2 && liftingStrategyMap.containsKey(args[1])) {
+            liftingStrategy = liftingStrategyMap.get(args[1]);
+            System.out.printf("Using %s lifting strategy\n", args[1]);
+        } else {
+            liftingStrategy = liftingStrategyMap.get("inputOrder");
+            System.out.println("Using input order strategy");
         }
         var input = new File(args[0]);
         if (input.isFile()) {
-            processFile(input);
+            processFile(input, liftingStrategy);
         } else if (input.isDirectory()) {
             var files = Objects.requireNonNull(input.listFiles());
-            Stream.of(files).forEach(ParityGame::processFile);
+            Stream.of(files).forEach((f) -> processFile(f, liftingStrategy));
         }
     }
 
-    private static void processFile(File file) {
+    private static void processFile(File file, Function<PGParser.ParseOutput, int[]> liftingStrategy) {
         String filePath = file.getAbsolutePath();
         var parseOutput = PGParser.parseFile(filePath);
-        Node[] nodes = parseOutput.nodes();
-        var bfsLifting = new BFSLifting(nodes);
-        var orderedStrategy = bfsLifting.getOddNodeBFSStrategy();
-        var solver = new SPMSolver(nodes);
+        var order = liftingStrategy.apply(parseOutput);
+        var solver = new SPMSolver(parseOutput.nodes());
 
-        System.out.printf("Game being solved: %s%n", file);
-        GameResult gameResult = solver.solve(orderedStrategy);
+        GameResult gameResult = solver.solve(order);
 
-        if (gameResult.getWonByEven().contains(0)) {
-            System.out.println("ID 0 is won by even");
-        } else {
-            System.out.println("ID 0 is won by odd");
-        }
-        System.out.printf("%d vertices are won by even%n", gameResult.getWonByEven().size());
-        System.out.printf("%d vertices are won by odd%n", gameResult.getWonByOdd().size());
+        double successfulLiftPercentage = gameResult.getTotalSuccessfulLifts() / (double) gameResult.getTotalLifts();
+        System.out.printf("""
+                        File=%s Id0WonBy=%s WonByEven=%d WonByOdd=%d TotalLifts=%d SuccessfulLifts=%d SuccessPercentage=%f
+                        """,
+                file.getName(), gameResult.getWonByEven().contains(0) ? "even" : "odd",
+                gameResult.getWonByEven().size(), gameResult.getWonByOdd().size(), gameResult.getTotalLifts(),
+                gameResult.getTotalSuccessfulLifts(), successfulLiftPercentage);
+    }
+
+    private static int[] getBfsOrderStrategy(PGParser.ParseOutput parseOutput) {
+        var bfsLifting = new BFSLifting(parseOutput.nodes());
+        return bfsLifting.getOddNodeBFSStrategy();
     }
 }

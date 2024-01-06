@@ -74,9 +74,7 @@ public class SPMSolver {
             totalLifts++;
             idx = (idx + 1) % nodes.length;
         }
-        double successRatio = totalSuccessfulLifts/(double)totalLifts;
-        System.out.printf("Done: Total=%d Successful=%d Ratio=%f%n", totalLifts, totalSuccessfulLifts, successRatio);
-        return computeGameResult();
+        return computeGameResult(totalLifts, totalSuccessfulLifts);
     }
 
     private boolean lift(Node node) {
@@ -131,8 +129,8 @@ public class SPMSolver {
      *
      * @return GameResult
      */
-    private GameResult computeGameResult() {
-        var res = new GameResult(new ArrayList<>(), new ArrayList<>());
+    private GameResult computeGameResult(int totalLifts, int totalSuccessfulLifts) {
+        var res = new GameResult(new ArrayList<>(), new ArrayList<>(), totalLifts, totalSuccessfulLifts);
         for (var node : nodes) {
             if (measures[node.getId()] instanceof Top) {
                 res.getWonByOdd().add(node.getId());
