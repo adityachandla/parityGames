@@ -68,6 +68,7 @@ public class SPMSolver {
             //This greatly improves efficiency.
             while (lift(nodeToLift)) {
                 totalSuccessfulLifts++;
+                totalLifts++;
                 iterationsWithoutProgress = 0;
             }
             iterationsWithoutProgress++;
