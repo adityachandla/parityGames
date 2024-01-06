@@ -8,7 +8,6 @@ import org.tue.solver.LiftingStrategy;
 import org.tue.solver.SPMSolver;
 import org.tue.utils.PGParser;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class ParityGameTest {

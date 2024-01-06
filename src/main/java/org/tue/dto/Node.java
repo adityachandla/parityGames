@@ -21,6 +21,6 @@ public class Node {
     }
 
     public boolean isOddPriority() {
-        return priority%2 != 0;
+        return priority % 2 != 0;
     }
 }

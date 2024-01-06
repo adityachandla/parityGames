@@ -3,7 +3,6 @@ package org.tue.solver;
 import org.tue.dto.Node;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -16,6 +15,7 @@ public class BFSLifting {
     private int idx;
     private final boolean[] visited;
     private int[] resOrder;
+
     public BFSLifting(Node[] nodes) {
         this.nodes = nodes;
         idx = 0;
@@ -25,10 +25,10 @@ public class BFSLifting {
 
     private void initializeReverseAdjacency() {
         reverseAdjacency = new ArrayList<>(nodes.length);
-        for(int i = 0; i < nodes.length; i++) {
+        for (int i = 0; i < nodes.length; i++) {
             reverseAdjacency.add(new ArrayList<>());
         }
-        for (var src: nodes) {
+        for (var src : nodes) {
             for (var dest : src.getSuccessors()) {
                 reverseAdjacency.get(dest).add(src.getId());
             }
@@ -42,7 +42,7 @@ public class BFSLifting {
         Predicate<Node> evenOddPredicate = (n) -> !n.isOddPriority() && n.isOddOwned();
         Predicate<Node> evenEvenPredicate = (n) -> !n.isOddPriority() && !n.isOddOwned();
         var order = List.of(oddOddPredicate, oddEvenPredicate, evenOddPredicate, evenEvenPredicate);
-        for (var predicate: order) {
+        for (var predicate : order) {
             bfs(predicate);
         }
         if (idx != nodes.length) {
@@ -54,13 +54,13 @@ public class BFSLifting {
     public void bfs(Predicate<Node> predicate) {
         Queue<Integer> bfsQueue = new LinkedList<>();
         for (int i = 0; i < nodes.length; i++) {
-            if(!visited[nodes[i].getId()] && predicate.test(nodes[i])) {
+            if (!visited[nodes[i].getId()] && predicate.test(nodes[i])) {
                 resOrder[idx++] = nodes[i].getId();
                 visited[nodes[i].getId()] = true;
                 bfsQueue.offer(i);
             }
         }
-        while(!bfsQueue.isEmpty()) {
+        while (!bfsQueue.isEmpty()) {
             var toProcess = bfsQueue.poll();
             for (var neighbour : reverseAdjacency.get(toProcess)) {
                 if (!visited[neighbour]) {

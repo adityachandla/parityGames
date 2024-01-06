@@ -8,7 +8,7 @@ public enum Owner {
     EVEN;
 
     public static Owner parseOwner(String s) {
-        if("1".equals(s)) {
+        if ("1".equals(s)) {
             return ODD;
         } else if ("0".equals(s)) {
             return EVEN;

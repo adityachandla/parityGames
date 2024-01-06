@@ -1,7 +1,7 @@
 package org.tue;
 
 import org.tue.dto.GameResult;
-import org.tue.dto.Node;
+import org.tue.dto.ParseOutput;
 import org.tue.solver.BFSLifting;
 import org.tue.solver.LiftingStrategy;
 import org.tue.solver.SPMSolver;
@@ -15,8 +15,8 @@ import java.util.stream.Stream;
 
 public class ParityGame {
 
-    private static final Map<String, Function<PGParser.ParseOutput, int[]>> liftingStrategyMap =
-            Map.of("inputOrder", PGParser.ParseOutput::inputOrder,
+    private static final Map<String, Function<ParseOutput, int[]>> liftingStrategyMap =
+            Map.of("inputOrder", ParseOutput::inputOrder,
                     "random", (res) -> LiftingStrategy.getRandomLiftingStrategy(res.nodes()),
                     "orderedNodes", (res) -> LiftingStrategy.getOrderedNodeTypeStrategy(res.nodes()),
                     "bfsOrder", ParityGame::getBfsOrderStrategy
@@ -27,7 +27,7 @@ public class ParityGame {
             System.out.println("Provide the path to the input file/folder optionally followed by lifting strategy.");
             System.exit(-1);
         }
-        Function<PGParser.ParseOutput, int[]> liftingStrategy;
+        Function<ParseOutput, int[]> liftingStrategy;
         if (args.length == 2 && liftingStrategyMap.containsKey(args[1])) {
             liftingStrategy = liftingStrategyMap.get(args[1]);
             System.out.printf("Using %s lifting strategy\n", args[1]);
@@ -44,7 +44,7 @@ public class ParityGame {
         }
     }
 
-    private static void processFile(File file, Function<PGParser.ParseOutput, int[]> liftingStrategy) {
+    private static void processFile(File file, Function<ParseOutput, int[]> liftingStrategy) {
         String filePath = file.getAbsolutePath();
         var parseOutput = PGParser.parseFile(filePath);
         var order = liftingStrategy.apply(parseOutput);
@@ -61,7 +61,7 @@ public class ParityGame {
                 gameResult.getTotalSuccessfulLifts(), successfulLiftPercentage);
     }
 
-    private static int[] getBfsOrderStrategy(PGParser.ParseOutput parseOutput) {
+    private static int[] getBfsOrderStrategy(ParseOutput parseOutput) {
         var bfsLifting = new BFSLifting(parseOutput.nodes());
         return bfsLifting.getOddNodeBFSStrategy();
     }

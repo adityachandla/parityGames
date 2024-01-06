@@ -40,7 +40,7 @@ public class SPMSolver {
     private void initializeMaxM() {
         for (var n : nodes) {
             if (n.getPriority() % 2 != 0) {
-                maxM.getArr()[n.getPriority()]++;
+                maxM.increment(n.getPriority());
             }
         }
     }

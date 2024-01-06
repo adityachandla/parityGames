@@ -3,6 +3,7 @@ package org.tue.utils;
 import lombok.SneakyThrows;
 import org.tue.dto.Node;
 import org.tue.dto.Owner;
+import org.tue.dto.ParseOutput;
 
 import java.io.*;
 import java.util.HashSet;
@@ -14,8 +15,6 @@ public class PGParser {
     private static final Pattern linePattern =
             Pattern.compile("(?<id>\\d+) (?<priority>\\d+) (?<owner>\\d+) (?<successors>[\\d,]+)( \"(?<name>.*)\")?;");
 
-
-    public record ParseOutput(int[] inputOrder, Node[] nodes){}
 
     @SneakyThrows({FileNotFoundException.class, IOException.class})
     public static ParseOutput parseFile(String input) {
