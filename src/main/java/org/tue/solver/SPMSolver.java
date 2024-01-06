@@ -64,13 +64,12 @@ public class SPMSolver {
         int totalSuccessfulLifts = 0;
         while (iterationsWithoutProgress < this.nodes.length) {
             var nodeToLift = this.nodes[liftingOrder[idx]];
-            //Lift while it is possible to lift.
-            //This greatly improves efficiency.
-            while (lift(nodeToLift)) {
+            if (lift(nodeToLift)) {
                 totalSuccessfulLifts++;
                 iterationsWithoutProgress = 0;
+            } else {
+                iterationsWithoutProgress++;
             }
-            iterationsWithoutProgress++;
             totalLifts++;
             idx = (idx + 1) % nodes.length;
         }
